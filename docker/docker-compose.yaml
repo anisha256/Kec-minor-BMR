@@ -1,0 +1,66 @@
+version: "2"
+
+networks: 
+  test:
+    
+
+services: 
+  db-org1:
+    image: mongo:latest
+    container_name: db-org1
+    environment:
+      - MONGO_INITDB_DATABASE=reporting
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume1:/data/db
+    ports:
+      - "27017-27019:27017-27019"
+    networks:
+      - test
+
+  reporting-org1:
+    build:
+      context: ../minor
+      dockerfile: Dockerfile
+    env_file: .env1
+    ports: 
+      - "3000:3000"
+    container_name: reporting-org1
+    volumes:
+      - ./wallet-org1:/usr/src/app/wallet
+      - ../hosp-network/organizations/ordererOrganizations:/usr/src/app/../hosp-network/organizations/ordererOrganizations
+      - ../hosp-network/organizations/peerOrganizations:/usr/src/app/../hosp-network/organizations/peerOrganizations
+    depends_on:
+      - db-org1
+    networks: 
+      - test   
+  db-org2:
+    image: mongo:latest
+    container_name: db-org2
+    environment:
+      - MONGO_INITDB_DATABASE=reporting
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./mongo-volume2:/data/db
+    ports:
+      - "37017-37019:37017-37019"
+    networks:
+      - test
+
+  reporting-org2:
+    build:
+      context: ../minor
+      dockerfile: Dockerfile
+    env_file: .env2
+    ports: 
+      - "4000:3000"
+    container_name: reporting-org2
+    volumes:
+      - ./wallet-org2:/usr/src/app/wallet
+      - ../hosp-network/organizations/ordererOrganizations:/usr/src/app/../hosp-network/organizations/ordererOrganizations
+      - ../hosp-network/organizations/peerOrganizations:/usr/src/app/../hosp-network/organizations/peerOrganizations
+    depends_on:
+      - db-org2
+    networks: 
+      - test        
+     

@@ -1,0 +1,84 @@
+.contact-num{
+text-align:left;
+}
+
+.dashboard .title-2{
+width: 100%;
+color:#444;
+}
+
+.dashboard{
+background-color:#fff;
+border:1px solid #f3eded;
+}
+.dashboard li{
+border-bottom: 1px solid #f3eded;
+}
+
+.dashboard .active{
+background-color:#9c27b0;
+
+}
+.active .title-2{
+color:white;
+}
+.dashstat{
+color:#9c27be;
+font-weight: bold;
+font-size:18px;
+
+}
+.bdrright{
+border-right:1px solid #f3eded;
+}
+.dashcard{
+border:1px solid #eaeaea;
+padding:10px;
+}
+.status{
+background:green;
+color:white;
+padding:4px 8px 4px 8px;
+border-radius: 4px;
+}
+.dashcard .title-1{
+margin-bottom: 30px;
+}
+.blacktitle{
+color:#000;
+font-weight: bolder;
+}
+.sidebar{
+border:1px solid #eaeaea;
+padding:10px;
+}
+.shipmentscard{
+border-bottom:1px solid #eaeaea;
+margin-bottom: 20px;
+}
+
+.shipmentscard:last-child {
+border-bottom: none;
+}
+
+.dashcard:before {
+margin: -1px auto auto;
+height: 1px;
+left: 0;
+position: absolute;
+right: 0;
+top: 0;
+width: 50%;
+}
+
+}
+.clrbg-before:before, .clrbg-after:after{
+background-color: #9C27B0;}
+
+.table>thead>tr>th {
+color: black;
+border-bottom: 2px solid #9c27b0;
+}
+th{
+color:black;
+}

@@ -1,0 +1,9 @@
+
+.env*
+
+vendor
+
+bin
+
+wallet*
+mongo*
