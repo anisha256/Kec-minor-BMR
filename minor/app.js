@@ -114,23 +114,23 @@ app.get('/doctor_entry', (req, res) => {
     data: {}
   })
 })
-app.post('/doctor_entry', function (req, res) {
-  res.render('form', {
-    data: req.body
-  })
-  console.log(req.body.doctorName)
-  var doctor = new Doctor({
-    doctorName: req.body.doctorName,
-    NMCNumber: req.body.NMCNumber,
-    //hospitalName: res.body.hospitalName,
-    qualification: req.body.qualification,
-    speciality: req.body.speciality,
+// app.post('/doctor_entry', function (req, res) {
+//   res.render('form', {
+//     data: req.body
+//   })
+//   console.log(req.body.doctorName)
+//   var doctor = new Doctor({
+//     doctorName: req.body.doctorName,
+//     NMCNumber: req.body.NMCNumber,
+//     //hospitalName: res.body.hospitalName,
+//     qualification: req.body.qualification,
+//     speciality: req.body.speciality,
 
-  })
-  var promise = doctor.save()
-  promise.then((doctor) => {
-    console.log("user saved", doctor)
-  })
+//   })
+//   var promise = doctor.save()
+//   promise.then((doctor) => {
+//     console.log("user saved", doctor)
+//   })
 
 })
 // app.get('/token', function(req, res){
@@ -169,8 +169,8 @@ app.post('/quotedoctor',
   responseController.user
 )
 app.get('/find',
-  blockchainController.queryChaincode,
   repoController.getReportByID,
+  blockchainController.queryChaincode,
   responseController.user
   )
 
