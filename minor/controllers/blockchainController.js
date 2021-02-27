@@ -232,6 +232,7 @@ const queryChaincode = async (req, _res, next) => {
             console.log(`*** Result: ${prettyJSONString(result.toString())}`);
 
             req.blockchain = prettyJSONString(result.toString());
+            res.render('report',{blockchain})
         } finally {
             // Disconnect from the gateway when the application is closing
             // This will close all connections to the network
