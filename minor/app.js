@@ -132,7 +132,6 @@ app.get('/doctor_entry', (req, res) => {
 //     console.log("user saved", doctor)
 //   })
 
-})
 // app.get('/token', function(req, res){
 //   var token = jwt.sign({id: login.id}, config.secret ,{expiresIn: 120});
 //   res.send(token)
