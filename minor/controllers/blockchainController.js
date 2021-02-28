@@ -194,6 +194,7 @@ const invokeChaincode = async (req, _res, next) => {
             req.body.patientName,
             process.env.MSPID,
             req.body.description,
+            //req.body.issueDate,
             Date.now(),
             req.body.height,
             req.body.weight);
@@ -203,6 +204,7 @@ const invokeChaincode = async (req, _res, next) => {
             return next();
         } finally {
             gateway.disconnect();
+            
         }
     } catch (error) {
         next(error);
@@ -219,19 +221,21 @@ const queryChaincode = async (req, _res, next) => {
         try {
             await gateway.connect(ccp, {
                 wallet,
-                identity:'admin',
+                identity: 'admin',
                 discovery: { enabled: true, asLocalhost: false }
             });
             const network = await gateway.getNetwork(process.env.CHANNEL_NAME);
             const contract = network.getContract(process.env.CHAINCODE_NAME);
 
             console.log('\n--> Evaluate Transaction: ReadAsset, function returns an asset with a given assetID');
-            if (req.query.id) result = await contract.evaluateTransaction(funcName, req.query.id);
+            if (req.body.id) result = await contract.evaluateTransaction(funcName, req.body.id);
             else result = await contract.evaluateTransaction(funcName);
 
             console.log(`*** Result: ${prettyJSONString(result.toString())}`);
 
-            req.blockchain = prettyJSONString(result.toString());
+            result = prettyJSONString(result.toString());
+            console.log(result)
+            _res.render('report',{result})
         } finally {
             // Disconnect from the gateway when the application is closing
             // This will close all connections to the network

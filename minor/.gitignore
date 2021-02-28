@@ -1,12 +1,2 @@
 node_modules
-wallet
 
-
-.env*
-
-vendor
-
-bin
-
-wallet*
-mongo*

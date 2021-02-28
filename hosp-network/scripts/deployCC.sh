@@ -87,7 +87,8 @@ if [ "$CC_SRC_LANGUAGE" = "go" ]; then
 
   infoln "Vendoring Go dependencies at $CC_SRC_PATH"
   pushd $CC_SRC_PATH
-  GO111MODULE=on go mod vendor
+  GO111MODULE=on 
+  go mod vendor
   popd
   successln "Finished vendoring Go dependencies"
 
@@ -306,7 +307,7 @@ chaincodeQuery() {
     sleep $DELAY
     infoln "Attempting to Query peer0.org${ORG}, Retry after $DELAY seconds."
     set -x
-    peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["queryAllReports"]}' >&log.txt
+    peer chaincode query -C $CHANNEL_NAME -n ${CC_NAME} -c '{"Args":["GetAllReports"]}' >&log.txt
     res=$?
     { set +x; } 2>/dev/null
     let rc=$res

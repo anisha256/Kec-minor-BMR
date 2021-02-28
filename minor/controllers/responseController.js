@@ -2,7 +2,7 @@ exports.user= async (req, res, next) => {
 	try {
 		console.log(req.user,
 			req.blockchain)
-		return res.status(200).json({
+		return res.render('quote',{
 			sucess: true,
 			data: {
 				message: 'Success',
@@ -19,7 +19,7 @@ exports.user= async (req, res, next) => {
 
 exports.ca = async (req, res, next) => {
 	try {
-		return res.status(200).json({
+		return res.render('index',{
 			sucess: true,
 			data: {
 				message: 'Success',

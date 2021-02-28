@@ -1,21 +1,77 @@
+#!/bin/bash
+#
+# Copyright IBM Corp All Rights Reserved
+#
+# SPDX-License-Identifier: Apache-2.0
+#
 
-#This hosp-network consists of two organizations with one
-# peer each, and a single node Raft ordering service. Users 
-
+# This script brings up a Hyperledger Fabric network for testing smart contracts
+# and applications. The test network consists of two organizations with one
+# peer each, and a single node Raft ordering service. Users can also use this
+# script to create a channel deploy a chaincode on the channel
+#
+# prepending $PWD/../bin to PATH to ensure we are picking up the correct binaries
+# this may be commented out to resolve installed version of tools if desired
 export PATH=${PWD}/../bin:$PATH
 export FABRIC_CFG_PATH=${PWD}/configtx
 export VERBOSE=false
 
 source scriptUtils.sh
 
-
+# Print the usage message
 function printHelp() {
- 
-  println " error "
- 
+  println "Usage: "
+  println "  network.sh <Mode> [Flags]"
+  println "    Modes:"
+  println "      "$'\e[0;32m'up$'\e[0m' - bring up fabric orderer and peer nodes. No channel is created
+  println "      "$'\e[0;32m'up createChannel$'\e[0m' - bring up fabric network with one channel
+  println "      "$'\e[0;32m'createChannel$'\e[0m' - create and join a channel after the network is created
+  println "      "$'\e[0;32m'deployCC$'\e[0m' - deploy the asset transfer basic chaincode on the channel or specify
+  println "      "$'\e[0;32m'down$'\e[0m' - clear the network with docker-compose down
+  println "      "$'\e[0;32m'restart$'\e[0m' - restart the network
+  println
+  println "    Flags:"
+  println "    Used with "$'\e[0;32m'network.sh up$'\e[0m', $'\e[0;32m'network.sh createChannel$'\e[0m':
+  println "    -ca <use CAs> -  create Certificate Authorities to generate the crypto material"
+  println "    -c <channel name> - channel name to use (defaults to \"mychannel\")"
+  println "    -s <dbtype> - the database backend to use: goleveldb (default) or couchdb"
+  println "    -r <max retry> - CLI times out after certain number of attempts (defaults to 5)"
+  println "    -d <delay> - delay duration in seconds (defaults to 3)"
+  println "    -i <imagetag> - the tag to be used to launch the network (defaults to \"latest\")"
+  println "    -cai <ca_imagetag> - the image tag to be used for CA (defaults to \"${CA_IMAGETAG}\")"
+  println "    -verbose - verbose mode"
+  println "    Used with "$'\e[0;32m'network.sh deployCC$'\e[0m'
+  println "    -c <channel name> - deploy chaincode to channel"
+  println "    -ccn <name> - the short name of the chaincode to deploy: basic (default),ledger, private, sbe, secured"
+  println "    -ccl <language> - the programming language of the chaincode to deploy: go (default), java, javascript, typescript"
+  println "    -ccv <version>  - chaincode version. 1.0 (default)"
+  println "    -ccs <sequence>  - chaincode definition sequence. Must be an integer, 1 (default), 2, 3, etc"
+  println "    -ccp <path>  - Optional, path to the chaincode. When provided the -ccn will be used as the deployed name and not the short name of the known chaincodes."
+  println "    -ccep <policy>  - Optional, chaincode endorsement policy, using signature policy syntax. The default policy requires an endorsement from Org1 and Org2"
+  println "    -cccg <collection-config>  - Optional, path to a private data collections configuration file"
+  println "    -cci <fcn name>  - Optional, chaincode init required function to invoke. When provided this function will be invoked after deployment of the chaincode and will define the chaincode as initialization required."
+  println
+  println "    -h - print this message"
+  println
+  println " Possible Mode and flag combinations"
+  println "   "$'\e[0;32m'up$'\e[0m' -ca -c -r -d -s -i -verbose
+  println "   "$'\e[0;32m'up createChannel$'\e[0m' -ca -c -r -d -s -i -verbose
+  println "   "$'\e[0;32m'createChannel$'\e[0m' -c -r -d -verbose
+  println "   "$'\e[0;32m'deployCC$'\e[0m' -ccn -ccl -ccv -ccs -ccp -cci -r -d -verbose
+  println
+  println " Taking all defaults:"
+  println "   network.sh up"
+  println
+  println " Examples:"
+  println "   network.sh up createChannel -ca -c mychannel -s couchdb -i 2.0.0"
+  println "   network.sh createChannel -c channelName"
+  println "   network.sh deployCC -ccn basic -ccl javascript"
+  println "   network.sh deployCC -ccn mychaincode -ccp ./user/mychaincode -ccv 1 -ccl javascript"
 }
 
-
+# Obtain CONTAINER_IDS and remove them
+# TODO Might want to make this optional - could clear other containers
+# This function is called when you bring a network down
 function clearContainers() {
   CONTAINER_IDS=$(docker ps -a | awk '($2 ~ /dev-peer.*/) {print $1}')
   if [ -z "$CONTAINER_IDS" -o "$CONTAINER_IDS" == " " ]; then
@@ -25,7 +81,9 @@ function clearContainers() {
   fi
 }
 
-
+# Delete any images that were generated as a part of this setup
+# specifically the following images are often left behind:
+# This function is called when you bring the network down
 function removeUnwantedImages() {
   DOCKER_IMAGE_IDS=$(docker images | awk '($1 ~ /dev-peer.*/) {print $3}')
   if [ -z "$DOCKER_IMAGE_IDS" -o "$DOCKER_IMAGE_IDS" == " " ]; then
@@ -35,6 +93,47 @@ function removeUnwantedImages() {
   fi
 }
 
+# Versions of fabric known not to work with the test network
+NONWORKING_VERSIONS="^1\.0\. ^1\.1\. ^1\.2\. ^1\.3\. ^1\.4\."
+
+# Do some basic sanity checking to make sure that the appropriate versions of fabric
+# binaries/images are available. In the future, additional checking for the presence
+# of go or other items could be added.
+function checkPrereqs() {
+  ## Check if your have cloned the peer binaries and configuration files.
+  peer version > /dev/null 2>&1
+
+  if [[ $? -ne 0 || ! -d "../config" ]]; then
+    errorln "Peer binary and configuration files not found.."
+    errorln
+    errorln "Follow the instructions in the Fabric docs to install the Fabric Binaries:"
+    errorln "https://hyperledger-fabric.readthedocs.io/en/latest/install.html"
+    exit 1
+  fi
+  # use the fabric tools container to see if the samples and binaries match your
+  # docker images
+  LOCAL_VERSION=$(peer version | sed -ne 's/ Version: //p')
+  DOCKER_IMAGE_VERSION=$(docker run --rm hyperledger/fabric-tools:$IMAGETAG peer version | sed -ne 's/ Version: //p' | head -1)
+
+  infoln "LOCAL_VERSION=$LOCAL_VERSION"
+  infoln "DOCKER_IMAGE_VERSION=$DOCKER_IMAGE_VERSION"
+
+  if [ "$LOCAL_VERSION" != "$DOCKER_IMAGE_VERSION" ]; then
+    warnln "Local fabric binaries and docker images are out of  sync. This may cause problems."
+  fi
+
+  for UNSUPPORTED_VERSION in $NONWORKING_VERSIONS; do
+    infoln "$LOCAL_VERSION" | grep -q $UNSUPPORTED_VERSION
+    if [ $? -eq 0 ]; then
+      fatalln "Local Fabric binary version of $LOCAL_VERSION does not match the versions supported by the test network."
+    fi
+
+    infoln "$DOCKER_IMAGE_VERSION" | grep -q $UNSUPPORTED_VERSION
+    if [ $? -eq 0 ]; then
+      fatalln "Fabric Docker image version of $DOCKER_IMAGE_VERSION does not match the versions supported by the test network."
+    fi
+  done
+
   ## Check for fabric-ca
   echo $CRYPTO
   if [ "$CRYPTO" == "Certificate Authorities" ]; then
@@ -42,7 +141,9 @@ function removeUnwantedImages() {
     fabric-ca-client version > /dev/null 2>&1
     if [[ $? -ne 0 ]]; then
       errorln "fabric-ca-client binary not found.."
-     
+      errorln
+      errorln "Follow the instructions in the Fabric docs to install the Fabric Binaries:"
+      errorln "https://hyperledger-fabric.readthedocs.io/en/latest/install.html"
       exit 1
     fi
     CA_LOCAL_VERSION=$(fabric-ca-client version | sed -ne 's/ Version: //p')
@@ -54,7 +155,31 @@ function removeUnwantedImages() {
       warnln "Local fabric-ca binaries and docker images are out of sync. This may cause problems."
     fi
   fi
+}
 
+# Before you can bring up a network, each organization needs to generate the crypto
+# material that will define that organization on the network. Because Hyperledger
+# Fabric is a permissioned blockchain, each node and user on the network needs to
+# use certificates and keys to sign and verify its actions. In addition, each user
+# needs to belong to an organization that is recognized as a member of the network.
+# You can use the Cryptogen tool or Fabric CAs to generate the organization crypto
+# material.
+
+# By default, the sample network uses cryptogen. Cryptogen is a tool that is
+# meant for development and testing that can quickly create the certificates and keys
+# that can be consumed by a Fabric network. The cryptogen tool consumes a series
+# of configuration files for each organization in the "organizations/cryptogen"
+# directory. Cryptogen uses the files to generate the crypto  material for each
+# org in the "organizations" directory.
+
+# You can also Fabric CAs to generate the crypto material. CAs sign the certificates
+# and keys that they generate to create a valid root of trust for each organization.
+# The script uses Docker Compose to bring up three CAs, one for each peer organization
+# and the ordering organization. The configuration file for creating the Fabric CA
+# servers are in the "organizations/fabric-ca" directory. Within the same directory,
+# the "registerEnroll.sh" script uses the Fabric CA client to create the identities,
+# certificates, and MSP folders that are needed to create the test network in the
+# "organizations/ordererOrganizations" directory.
 
 # Create Organization crypto material using cryptogen or CAs
 function createOrgs() {
@@ -149,6 +274,14 @@ function createOrgs() {
 # recognized as network members. The file also specifies the anchor peers for each
 # peer org. In future steps, this same file is used to create the channel creation
 # transaction and the anchor peer updates.
+#
+#
+# If you receive the following warning, it can be safely ignored:
+#
+# [bccsp] GetDefault -> WARN 001 Before using BCCSP, please call InitFactories(). Falling back to bootBCCSP.
+#
+# You can ignore the logs regarding intermediate certs, we are not using them in
+# this crypto implementation.
 
 # Generate orderer system channel genesis block.
 function createConsortium() {
@@ -159,6 +292,9 @@ function createConsortium() {
   fi
 
   infoln "Generating Orderer Genesis block"
+
+  # Note: For some unknown reason (at least for now) the block file can't be
+  # named orderer.genesis.block or the orderer will fail to launch!
   set -x
   configtxgen -profile TwoOrgsOrdererGenesis -channelID system-channel -outputBlock ./system-genesis-block/genesis.block
   res=$?
@@ -177,6 +313,8 @@ function createConsortium() {
 # Bring up the peer and orderer nodes using docker compose.
 function networkUp() {
 
+  checkPrereqs
+  # generate artifacts if they don't exist
   if [ ! -d "organizations/peerOrganizations" ]; then
     createOrgs
     createConsortium
@@ -235,7 +373,8 @@ function deployCC() {
 function networkDown() {
   # stop org3 containers also in addition to org1 and org2, in case we were running sample to add org3
   docker-compose -f $COMPOSE_FILE_BASE -f $COMPOSE_FILE_COUCH -f $COMPOSE_FILE_CA down --volumes --remove-orphans
-   # Don't remove the generated artifacts -- note, the ledgers are always removed
+  docker-compose -f $COMPOSE_FILE_COUCH_ORG3 -f $COMPOSE_FILE_ORG3 down --volumes --remove-orphans
+  # Don't remove the generated artifacts -- note, the ledgers are always removed
   if [ "$MODE" != "restart" ]; then
     # Bring down the network, deleting the volumes
     #Cleanup the chaincode containers
@@ -248,6 +387,7 @@ function networkDown() {
     docker run --rm -v $(pwd):/data busybox sh -c 'cd /data && rm -rf organizations/fabric-ca/org1/msp organizations/fabric-ca/org1/tls-cert.pem organizations/fabric-ca/org1/ca-cert.pem organizations/fabric-ca/org1/IssuerPublicKey organizations/fabric-ca/org1/IssuerRevocationPublicKey organizations/fabric-ca/org1/fabric-ca-server.db'
     docker run --rm -v $(pwd):/data busybox sh -c 'cd /data && rm -rf organizations/fabric-ca/org2/msp organizations/fabric-ca/org2/tls-cert.pem organizations/fabric-ca/org2/ca-cert.pem organizations/fabric-ca/org2/IssuerPublicKey organizations/fabric-ca/org2/IssuerRevocationPublicKey organizations/fabric-ca/org2/fabric-ca-server.db'
     docker run --rm -v $(pwd):/data busybox sh -c 'cd /data && rm -rf organizations/fabric-ca/ordererOrg/msp organizations/fabric-ca/ordererOrg/tls-cert.pem organizations/fabric-ca/ordererOrg/ca-cert.pem organizations/fabric-ca/ordererOrg/IssuerPublicKey organizations/fabric-ca/ordererOrg/IssuerRevocationPublicKey organizations/fabric-ca/ordererOrg/fabric-ca-server.db'
+    docker run --rm -v $(pwd):/data busybox sh -c 'cd /data && rm -rf addOrg3/fabric-ca/org3/msp addOrg3/fabric-ca/org3/tls-cert.pem addOrg3/fabric-ca/org3/ca-cert.pem addOrg3/fabric-ca/org3/IssuerPublicKey addOrg3/fabric-ca/org3/IssuerRevocationPublicKey addOrg3/fabric-ca/org3/fabric-ca-server.db'
     # remove channel and script artifacts
     docker run --rm -v $(pwd):/data busybox sh -c 'cd /data && rm -rf channel-artifacts log.txt *.tar.gz'
 
@@ -282,8 +422,11 @@ COMPOSE_FILE_BASE=docker/docker-compose-test-net.yaml
 COMPOSE_FILE_COUCH=docker/docker-compose-couch.yaml
 # certificate authorities compose file
 COMPOSE_FILE_CA=docker/docker-compose-ca.yaml
-
-
+# use this as the docker compose couch file for org3
+COMPOSE_FILE_COUCH_ORG3=addOrg3/docker/docker-compose-couch-org3.yaml
+# use this as the default docker-compose yaml definition for org3
+COMPOSE_FILE_ORG3=addOrg3/docker/docker-compose-org3.yaml
+#
 # use go as the default language for chaincode
 CC_SRC_LANGUAGE="go"
 # Chaincode version

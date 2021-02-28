@@ -15,7 +15,7 @@ type SmartContract struct {
 // Report describes basic details of what makes up a simple report
 type Report struct {
 	ID           string `json:"id"`
-	IssuedDate   string `json:"issuedDate"`
+	//IssueDate    string `json:"issueDate"`
 	DoctorName   string `json:"doctorName"`
 	PatientName  string `json:"patientName"`
 	HospitalName string `json:"hospitalName"`
@@ -48,7 +48,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 }
 
 // CreateReport issues a new report to the world state with given details.
-func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface, id string,/*issuedDate string*/ doctorName string, patientName string, hospitalName string, description string, at string, height string, weight string) error {
+func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface, id string, doctorName string, patientName string, hospitalName string, description string, at string, height string, weight string) error {
 	exists, err := s.ReportExists(ctx, id)
 	if err != nil {
 		return err
@@ -60,7 +60,6 @@ func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface
 	report := Report{
 
 		ID:           id,
-		//IssuedDate:   issuedDate,
 		DoctorName:   doctorName,
 		PatientName:  patientName,
 		HospitalName: hospitalName,
@@ -78,14 +77,14 @@ func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface
 	return ctx.GetStub().PutState(id, reportJSON)
 }
 
-// ReadReport returns the report stored in the world state with given ID.
-func (s *SmartContract) ReadReport(ctx contractapi.TransactionContextInterface, id  string) (*Report, error) {
-	reportJSON, err := ctx.GetStub().GetState(id)
+// ReadReport returns the report stored in the world state with given id.
+func (s *SmartContract) ReadReport(ctx contractapi.TransactionContextInterface, PatientName string) (*Report, error) {
+	reportJSON, err := ctx.GetStub().GetState(PatientName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to readDoctorName world state: %v", err)
+		return nil, fmt.Errorf("failed to readPatientName world state: %v", err)
 	}
 	if reportJSON == nil {
-		return nil, fmt.Errorf("the report %s does not exist", id)
+		return nil, fmt.Errorf("the report %s does not exist", PatientName)
 	}
 
 	var report Report
@@ -97,9 +96,9 @@ func (s *SmartContract) ReadReport(ctx contractapi.TransactionContextInterface, 
 	return &report, nil
 }
 
-// ReadReportFromUser returns the report stored in the world state sent by users.
-func (s *SmartContract) ReadReportFromUser(ctx contractapi.TransactionContextInterface, PatientName string) ([]*Report, error) {
-	queryString := fmt.Sprintf("{\"selector\":{\"patientName\":\"%s\"}}", PatientName)
+// ReadReportFromUser returns the report stored in the world state sent by users
+func (s *SmartContract) ReadReportFromUser(ctx contractapi.TransactionContextInterface, DoctorName string) ([]*Report, error) {
+	queryString := fmt.Sprintf("{\"selector\":{\"doctorName\":\"%s\"}}", DoctorName)
 
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
@@ -126,7 +125,7 @@ func (s *SmartContract) ReadReportFromUser(ctx contractapi.TransactionContextInt
 }
 
 // UpdateReport updates an existing report in the world state with provided parameters.
-func (s *SmartContract) UpdateReport(ctx contractapi.TransactionContextInterface, id string/*issuedDate string*/, doctorName string, patientName string, hospitalName string, description string, at string, height string, weight string) error {
+func (s *SmartContract) UpdateReport(ctx contractapi.TransactionContextInterface, id string, doctorName string, patientName string, hospitalName string, description string, at string, height string, weight string) error {
 	exists, err := s.ReportExists(ctx, id)
 	if err != nil {
 		return err
@@ -139,7 +138,6 @@ func (s *SmartContract) UpdateReport(ctx contractapi.TransactionContextInterface
 	report := Report{
 
 		ID:           id,
-		//IssuedDate:   issuedDate,
 		DoctorName:   doctorName,
 		PatientName:  patientName,
 		HospitalName: hospitalName,
