@@ -38,13 +38,13 @@
 		"Org1MSP": {
 			"mspid": "Org1MSP",
 			"adminPrivateKey": {
-				"path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/priv_sk"
+				"path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore/b22a47e19f707b0a606cdd3c154241005c8ea0edccd5dfdd95cb3451c9f41514_sk"
 			},
 			"peers": [
 				"peer0.org1.example.com"
 			],
 			"signedCert": {
-				"path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/Admin@org1.example.com-cert.pem"
+				"path": "/tmp/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts/cert.pem"
 			}
 		}
 	},

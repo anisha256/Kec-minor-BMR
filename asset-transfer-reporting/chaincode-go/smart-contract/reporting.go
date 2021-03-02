@@ -78,13 +78,13 @@ func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface
 }
 
 // ReadReport returns the report stored in the world state with given id.
-func (s *SmartContract) ReadReport(ctx contractapi.TransactionContextInterface, PatientName string) (*Report, error) {
-	reportJSON, err := ctx.GetStub().GetState(PatientName)
+func (s *SmartContract) ReadReport(ctx contractapi.TransactionContextInterface, id string) (*Report, error) {
+	reportJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
-		return nil, fmt.Errorf("failed to readPatientName world state: %v", err)
+		return nil, fmt.Errorf("failed to read report in world state: %v", err)
 	}
 	if reportJSON == nil {
-		return nil, fmt.Errorf("the report %s does not exist", PatientName)
+		return nil, fmt.Errorf("the report %s does not exist",id)
 	}
 
 	var report Report
@@ -97,8 +97,8 @@ func (s *SmartContract) ReadReport(ctx contractapi.TransactionContextInterface, 
 }
 
 // ReadReportFromUser returns the report stored in the world state sent by users
-func (s *SmartContract) ReadReportFromUser(ctx contractapi.TransactionContextInterface, DoctorName string) ([]*Report, error) {
-	queryString := fmt.Sprintf("{\"selector\":{\"doctorName\":\"%s\"}}", DoctorName)
+func (s *SmartContract) ReadReportFromUser(ctx contractapi.TransactionContextInterface, doctorName string) ([]*Report, error) {
+	queryString := fmt.Sprintf("{\"selector\":{\"doctorName\":\"%s\"}}", doctorName)
 
 	resultsIterator, err := ctx.GetStub().GetQueryResult(queryString)
 	if err != nil {
@@ -171,7 +171,7 @@ func (s *SmartContract) DeleteReport(ctx contractapi.TransactionContextInterface
 func (s *SmartContract) ReportExists(ctx contractapi.TransactionContextInterface, id string) (bool, error) {
 	reportJSON, err := ctx.GetStub().GetState(id)
 	if err != nil {
-		return false, fmt.Errorf("failed to readDoctorName world state: %v", err)
+		return false, fmt.Errorf("failed to read report in  world state: %v", err)
 	}
 
 	return reportJSON != nil, nil
