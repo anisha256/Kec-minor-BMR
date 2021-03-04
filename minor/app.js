@@ -41,7 +41,7 @@ mongoose.set('useCreateIndex', true);
 
 
 mongoose.connection.on('error', (err) => {
-console.error('Mongo failed to connect');
+  console.error('Mongo failed to connect');
 });
 enrollAdmin();
 
@@ -49,12 +49,12 @@ app.post('/signup',
   [
     verifySignUp.checkDuplicateUsernameOrEmail
   ],
- blockchainController.registerAndEnrollUser,
+  blockchainController.registerAndEnrollUser,
   responseController.ca,
 );
 
-app.post("/signin", 
-logincontroller.signin
+app.post("/signin",
+  logincontroller.signin
 );
 
 app.get('/', (req, res) => {
@@ -115,7 +115,7 @@ app.post('/quote',
 )
 
 app.post('/quotedoctor',
- 
+
   blockchainController.invokeChaincode,
   responseController.user
 )
@@ -124,8 +124,8 @@ app.post('/find',
   reportController.getReportByID,
   blockchainController.queryChaincode,
   responseController.user
-  
-  )
+
+)
 app.post('/display',
   reportController.getReports,
   blockchainController.queryChaincode,
@@ -135,8 +135,8 @@ app.post('/update',
   reportController.updateReportByID,
   blockchainController.invokeChaincode,
   responseController.user
-  
-  )
+
+)
 
 app.post('/search', function (req, res) {
   console.log(req.body);
