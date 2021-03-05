@@ -83,6 +83,9 @@ app.get('/about', (req, res) => {
 app.get('/tracking', (req, res) => {
   res.render('tracking')
 })
+app.get('/trackingdoctor', (req, res) => {
+  res.render('trackingdoctor')
+})
 
 app.get('/contact', (req, res) => {
   res.render('contact-us')

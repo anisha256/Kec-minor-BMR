@@ -214,11 +214,16 @@ input {
 	margin: 20px 0;
 }
 .patient{
-	margin-top: 60%;
+	margin-top: 55%;
 	margin-left:20%;
 }
 
 .btn-patient{
 	top:50%;
 	margin-left:30%;
+}
+
+.btn-doctor{
+	background-color: #eee ;
+	color: #eee;
 }
