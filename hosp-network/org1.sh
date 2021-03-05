@@ -7,4 +7,3 @@ export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.examp
 export CORE_PEER_ADDRESS=localhost:7051
 export FABRIC_CFG_PATH=$HOME/BMR/config/
 
-

@@ -221,6 +221,7 @@ input {
 .btn-patient{
 	top:50%;
 	margin-left:30%;
+    color: #eee;
 }
 
 .btn-doctor{
