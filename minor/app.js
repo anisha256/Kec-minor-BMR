@@ -56,11 +56,15 @@ app.post('/signup',
 app.post("/signin",
   logincontroller.signin
 );
-
+app.post("/signindoctor",
+  logincontroller.signindoctor
+)
 app.get('/', (req, res) => {
   res.render('index')
 })
-
+app.get('/doctor', (req, res) => {
+  res.render('indexdoctor')
+})
 app.get('/home', (req, res) => {
   res.render('home')
 })
