@@ -14,35 +14,20 @@ type SmartContract struct {
 
 // Report describes basic details of what makes up a simple report
 type Report struct {
-	ID           string `json:"id"`
-	//IssueDate    string `json:"issueDate"`
-	DoctorName   string `json:"doctorName"`
-	PatientName  string `json:"patientName"`
-	HospitalName string `json:"hospitalName"`
-	Timestamp    string `json:"timestamp"`
-	Description  string `json:"description"`
-	Height       string `json:"height"`
-	Weight       string `json:"weight"`
+	ID                string `json:"id"`
+	//IssueDate       string `json:"issueDate"`
+	DoctorName        string `json:"doctorName"`
+	PatientName       string `json:"patientName"`
+	HospitalName      string `json:"hospitalName"`
+	Timestamp         string `json:"timestamp"`
+	Description       string `json:"description"`
+	Height            string `json:"height"`
+	Weight            string `json:"weight"`
+	
 }
 
 // InitLedger adds a base set of reports to the ledger
 func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) error {
-	// reports := []Report{
-	// 	{ID: "invoice1", DoctorName: "Bibek", PatientName: "Dipesh", HospitalName: "patan", Timestamp: "23-12-2020", Description: ""},
-	// 	{ID: "invoice2", DoctorName: "Ram", PatientName: "Shyam", HospitalName: "telganga", Timestamp: "23-12-2020", Description: ""},
-	// }
-
-	// for _, report := range reports {
-	// 	reportJSON, err := json.Marshal(report)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-
-	// 	err = ctx.GetStub().PutState(report.ID, reportJSON)
-	// 	if err != nil {
-	// 		return fmt.Errorf("failed to put to world state. %v", err)
-	// 	}
-	// }
 
 	return nil
 }
@@ -67,6 +52,7 @@ func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface
 		Description:  description,
 		Height:       height,
 		Weight:       weight,
+		
 	}
 
 	reportJSON, err := json.Marshal(report)
@@ -95,6 +81,7 @@ func (s *SmartContract) ReadReport(ctx contractapi.TransactionContextInterface, 
 
 	return &report, nil
 }
+
 
 // ReadReportFromUser returns the report stored in the world state sent by users
 func (s *SmartContract) ReadReportFromUser(ctx contractapi.TransactionContextInterface, doctorName string) ([]*Report, error) {
@@ -145,6 +132,7 @@ func (s *SmartContract) UpdateReport(ctx contractapi.TransactionContextInterface
 		Description:  description,
 		Height:       height,
 		Weight:       weight,
+	
 	}
 	reportJSON, err := json.Marshal(report)
 	if err != nil {
@@ -176,6 +164,7 @@ func (s *SmartContract) ReportExists(ctx contractapi.TransactionContextInterface
 
 	return reportJSON != nil, nil
 }
+
 
 // GetAllReports returns all reports found in world state
 func (s *SmartContract) GetAllReports(ctx contractapi.TransactionContextInterface) ([]*Report, error) {

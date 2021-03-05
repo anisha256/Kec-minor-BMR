@@ -20,7 +20,7 @@ var corsOptions = {
 
 // require("./db/conn");
 var User = require('./models/User');
-
+var Doctor= require('./models/Doctor')
 
 // Static Files
 app.use(express.static('public'))
@@ -56,6 +56,12 @@ app.post('/signup',
 app.post("/signin", 
 logincontroller.signin
 );
+app.post("/signindoctor",
+  logincontroller.signindoctor
+)
+app.get('/doctor', (req, res) => {
+  res.render('indexdoctor')
+})
 
 app.get('/', (req, res) => {
   res.render('index')
@@ -109,7 +115,7 @@ app.get('/doctor_entry', (req, res) => {
   })
 })
 app.post('/quote',
-
+  
   blockchainController.invokeChaincode,
   responseController.user
 )
@@ -126,17 +132,33 @@ app.post('/find',
   responseController.user
   
   )
-app.post('/display',
-  reportController.getReports,
-  blockchainController.queryChaincode,
-  responseController.user
-)
+
 app.post('/update',
   reportController.updateReportByID,
+  blockchainController.queryChaincode,
   blockchainController.invokeChaincode,
   responseController.user
   
   )
+  app.post('/doctor_entry', function (req, res) {
+    res.render('form', {
+      data: req.body
+    })
+    console.log(req.body.doctorName)
+    var user = new Doctor({
+      doctorName: req.body.doctorName,
+      NMCNumber: req.body.NMCNumber,
+      //hospitalName: res.body.hospitalName,
+      qualification: req.body.qualification,
+      speciality: req.body.speciality,
+  
+    })
+    var promise = doctor.save()
+    promise.then((doctor) => {
+      console.log("user saved", doctor)
+    })
+  
+  })
 
 app.post('/search', function (req, res) {
   console.log(req.body);

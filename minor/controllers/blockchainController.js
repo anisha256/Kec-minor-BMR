@@ -78,6 +78,7 @@ const enrollAdmin = async () => {
         }
         console.log("process.env.ADMIN_USERID1",process.env.ADMIN_USERID)
         console.log("process.env.ADMIN_USERPW",process.env.ADMIN_USERPW)
+
         const enrollment = await caClient.enroll({ enrollmentID: process.env.ADMIN_USERID, enrollmentSecret: process.env.ADMIN_USERPW });
         const x509Identity = {
             credentials: {
@@ -87,9 +88,9 @@ const enrollAdmin = async () => {
             mspId: process.env.MSPID,
             type: 'X.509',
         };
-        console.log("process.env.ADMIN_USERID",process.env.ADMIN_USERID)
+      
         await wallet.put(process.env.ADMIN_USERID, x509Identity);
-        console.log("process.env.ADMIN_USERID1",process.env.ADMIN_USERID)
+       
       } catch (error) {
         console.error(`Failed to enroll admin user : ${error}`);
         throw new Error(`Failed to enroll admin user : ${error}`);
@@ -115,6 +116,7 @@ const registerAndEnrollUser = async (req, _res, next) => {
         if (!adminIdentity) {
             console.log('An identity for the admin user does not exist in the wallet');
             console.log('Enroll the admin user before retrying');
+
             throw new Error('An identity for the admin user does not exist in the wallet. Enroll the admin user before retrying')
         }
         const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
@@ -141,7 +143,7 @@ const registerAndEnrollUser = async (req, _res, next) => {
         await wallet.put(email, x509Identity);
         req.ca = x509Identity;
         const user = new User({
-            //username: req.body.username,
+            
             email: req.body.email,
             role: req.body.role,
             password: bcrypt.hashSync(req.body.password, 8)
@@ -194,7 +196,7 @@ const invokeChaincode = async (req, _res, next) => {
             req.body.patientName,
             process.env.MSPID,
             req.body.description,
-            //req.body.issueDate,
+            
             Date.now(),
             req.body.height,
             req.body.weight);
@@ -227,7 +229,7 @@ const queryChaincode = async (req, _res, next) => {
             const network = await gateway.getNetwork(process.env.CHANNEL_NAME);
             const contract = network.getContract(process.env.CHAINCODE_NAME);
 
-            console.log('\n--> Evaluate Transaction: ReadAsset, function returns an asset with a given assetID');
+            console.log('\n--> Evaluate Transaction: ReadReport, function returns a report with a given ID');
             if (req.body.id) result = await contract.evaluateTransaction(funcName, req.body.id);
             else result = await contract.evaluateTransaction(funcName);
 
