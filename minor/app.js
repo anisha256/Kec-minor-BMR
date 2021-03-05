@@ -1,4 +1,3 @@
-// Imports
 const express = require('express')
 const app = express();
 const bodyParser = require('body-parser');
@@ -21,6 +20,7 @@ var corsOptions = {
 // require("./db/conn");
 var User = require('./models/User');
 var Doctor= require('./models/Doctor')
+
 
 // Static Files
 app.use(express.static('public'))
@@ -59,14 +59,15 @@ logincontroller.signin
 app.post("/signindoctor",
   logincontroller.signindoctor
 )
-app.get('/doctor', (req, res) => {
-  res.render('indexdoctor')
-})
-
 app.get('/', (req, res) => {
   res.render('index')
 })
-
+app.get('/doctor',(req,res)=>{
+  res.render('indexdoctor')
+})
+app.get('/patient',(req,res)=>{
+  res.render('indexpatient')
+})
 app.get('/home', (req, res) => {
   res.render('home')
 })
@@ -114,8 +115,27 @@ app.get('/doctor_entry', (req, res) => {
     data: {}
   })
 })
+app.post('/doctor_entry', function (req, res) {
+  res.render('form', {
+    data: req.body
+  })
+  console.log(req.body.doctorName)
+  var user = new Doctor({
+    doctorName: req.body.doctorName,
+    NMCNumber: req.body.NMCNumber,
+    //hospitalName: res.body.hospitalName,
+    qualification: req.body.qualification,
+    speciality: req.body.speciality,
+
+  })
+  var promise = doctor.save()
+  promise.then((doctor) => {
+    console.log("user saved", doctor)
+  })
+
+})
 app.post('/quote',
-  
+
   blockchainController.invokeChaincode,
   responseController.user
 )
@@ -135,34 +155,14 @@ app.post('/find',
 
 app.post('/update',
   reportController.updateReportByID,
-  blockchainController.queryChaincode,
   blockchainController.invokeChaincode,
   responseController.user
   
   )
-  app.post('/doctor_entry', function (req, res) {
-    res.render('form', {
-      data: req.body
-    })
-    console.log(req.body.doctorName)
-    var user = new Doctor({
-      doctorName: req.body.doctorName,
-      NMCNumber: req.body.NMCNumber,
-      //hospitalName: res.body.hospitalName,
-      qualification: req.body.qualification,
-      speciality: req.body.speciality,
-  
-    })
-    var promise = doctor.save()
-    promise.then((doctor) => {
-      console.log("user saved", doctor)
-    })
-  
-  })
 
 app.post('/search', function (req, res) {
   console.log(req.body);
-  User.find({ 'name': { $regex: req.body.name } })
+  Doctor.find({ 'name': { $regex: req.body.name } })
     .then((data => {
       console.log(data[0].name)
       res.render('view_doctor', { data });

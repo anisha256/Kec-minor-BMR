@@ -2,12 +2,14 @@
 <html>
     
 
-<head>
-       <title>BMR</title>        
-       <meta charset="UTF-8">
+    <head>
+        <title>BMR</title>
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <!-- Bootstrap Css -->
+        <link rel="stylesheet" type="text/css" href="/css/main.css">
+        <link rel="stylesheet" type="text/css" href="/css/signup.css">
         <link rel="stylesheet" type="text/css" href="/plugins/bootstrap-3.3.6/css/bootstrap.min.css">        
         <!-- Bootstrap Select Css -->
         <link rel="stylesheet" type="text/css" href="/plugins/bootstrap-select-1.10.0/dist/css/bootstrap-select.min.css">
@@ -23,15 +25,16 @@
 
         <!-- Main Css -->
         <link rel="stylesheet" type="text/css" href="/css/theme.css">
-             <link rel="stylesheet" type="text/css" href="/css/custom.css">
-
+        <link rel="stylesheet" type="text/css" href="/css/custom.css">
 
         <!--[if lt IE 9]>
-        <script src="/plugins/iesupport/html5shiv.js"></script>
-        <script src="/plugins/iesupport/respond.js"></script>
+        <script src="assets/plugins/iesupport/html5shiv.js"></script>
+        <script src="assets/plugins/iesupport/respond.js"></script>
         <![endif]-->
     </head>
-    <body id="home">
+    <body id="home" class="main">
+        
+
 
         <!-- Main Wrapper -->        
         <main class="wrapper">
@@ -43,18 +46,21 @@
                 <div class="top-bar font2-title1 white-clr">
                     <div class="theme-container container">
                         <div class="row">
-                            
-                            <div class="col-md-12 col-sm-12 fs-12">
-                                <p class="contact-num">  <i class="fa fa-phone"></i> Call us now: <span class="theme-clr"> +977-9860394938 </span> </p>
+                            <div class="col-md-12 col-sm-12 ">
+                                    <p class="contact-num">  <i class="fa fa-phone"></i> Call us now: <span class="theme-clr">+977-9860394938 </span> </p>
+                
                             </div>
+
+                       
+
                         </div>
                     </div>
-                    <a data-toggle="modal" href="/" class="sign-in fs-12 theme-clr-bg"> logout</a>
+                   
                 </div>
                 <!-- /.Header Topbar -->
 
                 <!-- Header Logo & Navigation -->
-            <nav class="menu-bar font2-title1">
+                <nav class="menu-bar font2-title1">
                     <div class="theme-container container">
                         <div class="row">
                             <div class="col-md-2 col-sm-2">
@@ -64,22 +70,22 @@
                                     <span class="icon-bar"></span>
                                     <span class="icon-bar"></span>
                                 </button>
-                                <a class="navbar-logo" href="#"> ,<h3>BMR</h3></a>
+                                <a class="navbar-logo" href="#"> <h3>BMR</h3> </a>
                             </div>
-                            <div class="col-md-10 col-sm-10 fs-12">
+                            <!-- <div class="col-md-10 col-sm-10 fs-12">
                                 <div id="navbar" class="collapse navbar-collapse no-pad">
                                     <ul class="navbar-nav theme-menu">
                                         <li class="active"><a href="/home">Home </a></li>
                                         <li> <a href="/about">about</a> </li>
                                         <li> <a href="/tracking"> My REPORT</a> </li>
-                                         
+                                          <li> <a href="/quote"> REPORT</a> </li>
                                         <li> <a href="/doctor_details"> Doctors </a> </li>
                                         <li> <a href="/contact"> contact </a> </li>
                              
                              
                                     </ul>                                                      
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </nav>
@@ -87,113 +93,98 @@
 
             </header>
             <!-- /.Header -->
-
-            <!-- Content Wrapper -->
-            <article class="about-page"> 
-                <!-- Breadcrumb -->
-                <section class="theme-breadcrumb pad-50">                
-                    <div class="theme-container container ">  
-                        <div class="row">
-                            <div class="col-sm-8 pull-left">
-                                <div class="title-wrap">
-                                    <h2 class="section-title no-margin">About us</h2>
-                                    <p class="fs-16 no-margin">Know about us more</p>
-                                </div>
-                            </div>
-                            <div class="col-sm-4">                        
-                                <ol class="breadcrumb-menubar list-inline">
-                                    <li><a href="#" class="gray-clr">Home</a></li>                                   
-                                    <li class="active">About</li>
-                                </ol>
-                            </div>  
+    
+             <!--  <div class="modal-content">   
+                        <div class="login-wrap text-center col-md-3 col-sm-6">                        
+                            <h2 class="title-3"> sign in </h2>
+                            <p> Sign in to <strong> GO </strong> for getting all details </p>                        
+    
+                            <div class="login-form clrbg-before">
+                                <form class="login">
+                                    <div class="form-group"><input type="text" placeholder="Email address" class="form-control"></div>
+                                    <div class="form-group"><input type="password" placeholder="Password" class="form-control"></div>
+                                    <div class="form-group">
+                                        <button class="btn-1 " type="submit"> Sign in now </button>
+                                    </div>
+                                </form>
+                                <a href="#" class="gray-clr"> Forgot Passoword? </a>                            
+                            </div>                        
                         </div>
-                    </div>
-                </section>
-                <!-- /.Breadcrumb -->
-
-                <!-- About Us -->
-                <section class="pad-50 about-wrap">
-                    <span class="bg-text"> About </span>
-                    <div class="theme-container container">               
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="about-us pt-10">
-                                    <p class="fs-16 wow fadeInUp" data-wow-offset="50" data-wow-delay=".25s">
-                                        B M R is a blockchain based medical record for storing the medical records in the blockchain which is more secure than the traditional method and also it enables ta facility to exchange the report of a patient between two hospitals with security and transparency.
-                                        We can securely access our medical report.
-                                        It digitalize and regulate personal medical record of patient.
-                                    </p>
-                                    <ul class="feature">
-                                        <!-- <li> 
-                                            <img alt="" src="/img/icons/icon-2.png" class="wow fadeInUp" data-wow-offset="50" data-wow-delay=".20s" /> 
-                                            <div class="feature-content wow rotateInDownRight" data-wow-offset="50" data-wow-delay=".30s"> 
-                                                <h2 class="title-1">Fast delivery</h2> 
-                                                <p>Duis autem vel eum iriure dolor</p>                                            
-                                            </div>  
-                                        </li> -->
-                                        <li> 
-                                            <img alt="" src="/img/icons/icon-3.png" class="wow fadeInUp" data-wow-offset="50" data-wow-delay=".20s" /> 
-                                            <div class="feature-content wow rotateInDownRight" data-wow-offset="50" data-wow-delay=".30s"> 
-                                                <h2 class="title-1">secured service</h2> 
-                                                <p>Use of blockchain made it more secured</p>                                            
-                                            </div>  
-                                        </li>
-                                        <!-- <li> 
-                                            <img alt="" src="/img/icons/icon-4.png" class="wow fadeInUp" data-wow-offset="50" data-wow-delay=".20s" /> 
-                                            <div class="feature-content wow rotateInDownRight" data-wow-offset="50" data-wow-delay=".30s"> 
-                                                <h2 class="title-1">worldwide shipping</h2> 
-                                                <p>Eum iriure dolor in hendrerit in vulputa</p>                                            
-                                            </div>  
-                                        </li> -->
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-6 text-center">                                
-                                <img alt="" src="/img/block/doctor.png" class="effect animated fadeInRight" />
-                            </div>
+                        <div class="login-wrap text-center col-md-3 col-sm-6">                        
+                            <h2 class="title-3"> sign in </h2>
+                            <p> Sign in to <strong> GO </strong> for getting all details </p>                        
+    
+                            <div class="login-form clrbg-before">
+                                <form class="login">
+                                    <div class="form-group"><input type="text" placeholder="Email address" class="form-control"></div>
+                                    <div class="form-group"><input type="password" placeholder="Password" class="form-control"></div>
+                                    <div class="form-group">
+                                        <button class="btn-1 " type="submit"> Sign in now </button>
+                                    </div>
+                                </form>
+                                <a href="#" class="gray-clr"> Forgot Passoword? </a>                            
+                            </div>                        
                         </div>
-                    </div>
-                </section>
-                <!-- /.About Us -->
-
-                <!-- More About Us -->
-                <section class="pad-30 more-about-wrap">
-                    <div class="theme-container container pb-100">               
-                        <div class="row">
-                            <div class="col-md-4 col-sm-4 wow fadeInUp" data-wow-offset="50" data-wow-delay=".20s">
-                                <div class="more-about clrbg-before">
-                                    <h2 class="title-1">what we do</h2>
-                                    <div class="pad-10"></div>
-                                            </div>
+             
+                    </div>-->     
+                    <div class="wrap">
+                    <div class="contain" id="contain">
+                        <div class="form-container sign-up-container">
+                        
+                        <form  method="POST">
+                            <h1>Create Account</h1>
+                            <div class="social-container">
+                                <a href="#" class="social"><i class="fa fa-facebook"></i></a>
+                                <a href="#" class="social"><i class="fa fa-google"></i></a>
+                                <a href="#" class="social"><i class="fa fa-linkedin"></i></a>
                             </div>
-                            <div class="col-md-4 col-sm-4 wow fadeInUp" data-wow-offset="50" data-wow-delay=".30s">
-                                <div class="more-about clrbg-before">
-                                    <h2 class="title-1">Our History</h2>
-                                    <div class="pad-10"></div>
-                                         </div>
+                            <span>or use your email for registration</span>
+                            <input type="text" name="name" placeholder="Name">
+                            <input type="email" name="email" placeholder="Email">
+                            <input type="password" name="password" placeholder="Password">
+                            <button>SignUp</button>
+                        </form>
+                        </div>
+                        <div class="form-container sign-in-container">
+                            <form action="/signin" method="POST">
+                                <h1>Sign In</h1>
+                                <div class="social-container">
+                                <a href="#" class="social"><i class="fa fa-facebook"></i></a>
+                                <a href="#" class="social"><i class="fa fa-google"></i></a>
+                                <a href="#" class="social"><i class="fa fa-linkedin"></i></a>
                             </div>
-                            <div class="col-md-4  col-sm-4 wow fadeInUp" data-wow-offset="50" data-wow-delay=".40s">
-                                <div class="more-about clrbg-before">
-                                    <h2 class="title-1">our mission</h2>
-                                    <div class="pad-10"></div>
-                                   
-                                        
+                            <span>or use your account</span>
+                            <input type="email" name="email" placeholder="Email">
+                            <input type="password" name="password" placeholder="Password">
+                            <a href="#">Forgot Your Password</a>
+                        
+                            <button>Sign In</button>
+                            </form>
+                        </div>
+                        <div class="overlay-container">
+                            <div class="overlay">
+                                <div class="overlay-panel overlay-left">
+                                    <h1>Welcome Back!</h1>
+                                    <p>To keep connected with us please login with your personal info</p>
+                                    <button class="ghost" id="signIn">Sign In</button>
+                                </div>
+                                <div class="overlay-panel overlay-right">
+                                    <h1>Hello, Patient!</h1>
+                                    <p>Enter your details and start journey with us</p>
+                                    <a data-toggle="modal" href="#login-popup" class="sign-in fs-12 theme-clr-bg">Sign Up</a>
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </div>
-                </section>
-                <!-- /.More About Us -->
-            </article>
-            <!-- /.Content Wrapper -->
-
+              
             <!-- Footer -->
-       <footer>
+            <footer>
                 <div class="footer-main pad-120 white-clr">
                     <div class="theme-container container">               
                         <div class="row">
                             <div class="col-md-3 col-sm-6 footer-widget">
-                                <a href="#"> <h2>BMR</h2></a>
+                                <a href="#"> <img class="logo" alt="#" src="/img/logo/logo-white.png" />  </a>
                             </div>
                             <div class="col-md-3 col-sm-6 footer-widget">
                                 <h2 class="title-1 fw-900">quick links</h2>
@@ -253,21 +244,22 @@
 
                 <div class="modal-content">   
                     <div class="login-wrap text-center">                        
-                        <h2 class="title-3"> sign in </h2>
-                        <p> Sign in to <strong> GO </strong> for getting all details </p>                        
+                        <h2 class="title-3"> sign up</h2>
+                        <p> Sign up to <strong> GO </strong> for getting all details </p>                        
 
                         <div class="login-form clrbg-before">
-                            <form class="login">
-                                <div class="form-group"><input type="text" placeholder="Email address" class="form-control"></div>
-                                <div class="form-group"><input type="password" placeholder="Password" class="form-control"></div>
+                            <form class="login" action="/signup" method="POST" >
+                                <div class="form-group"><input type="text" placeholder="Email address" class="form-control" name="email"></div>
+                                <div class="form-group"><input type="text" placeholder="Role" class="form-control" name="role"></div>
+                                <div class="form-group"><input type="password" placeholder="Password" class="form-control" name="password"></div>
                                 <div class="form-group">
-                                    <button class="btn-1 " type="submit"> Sign in now </button>
+                                    <button class="btn-1 " type="submit"> Sign up now </button>
                                 </div>
                             </form>
                             <a href="#" class="gray-clr"> Forgot Passoword? </a>                            
                         </div>                        
                     </div>
-             
+         
                 </div>
             </div>
         </div>
@@ -291,20 +283,29 @@
         <!-- Bootstrap JS -->
         <script src="/plugins/bootstrap-3.3.6/js/bootstrap.min.js" type="text/javascript"></script>    
         <!-- Bootstrap Select JS -->
-        <script src="/plugins/bootstrap-select-1.10.0/dist/js/bootstrap-select.min.js" type="text/javascript"></script>    
+        <script src="plugins/bootstrap-select-1.10.0/dist/js/bootstrap-select.min.js" type="text/javascript"></script>    
         <!-- OwlCarousel2 Slider JS -->
         <script src="/plugins/owl.carousel.2/owl.carousel.min.js" type="text/javascript"></script>   
         <!-- Sticky Header -->
         <script src="/js/jquery.sticky.js"></script>
         <!-- Wow JS -->
-        <script src="/plugins/WOW-master/dist/wow.min.js" type="text/javascript"></script>   
+        <script src="/plugins/WOW-master/dist/wow.min.js" type="text/javascript"></script>
+        <!-- Data binder -->
+        <script src="/plugins/data.binder.js/data.binder.js" type="text/javascript"></script>
 
         <!-- Slider JS -->        
 
 
         <!-- Theme JS -->
         <script src="/js/theme.js" type="text/javascript"></script>
+        <script type="text/javascript">
+            const toggleForm = () => {
+            const container = document.querySelector('.contain');
+            container.classList.toggle('active');
+            };
+        </script>
 
     </body>
+
 
 </html>
