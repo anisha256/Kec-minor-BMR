@@ -20,9 +20,9 @@ const buildCAClient = (FabricCAServices, ccp, caHostName) => {
     // Create a new CA client for interacting with the CA.
     const caInfo = ccp.certificateAuthorities[caHostName]; //lookup CA details from config
     const caTLSCACerts = caInfo.tlsCACerts.pem;
-    console.log("caInfo.url",caInfo.url)
-    console.log("caName",caInfo.caName)
-    console.log("caT",caTLSCACerts)
+    console.log("caInfo.url", caInfo.url)
+    console.log("caName", caInfo.caName)
+    console.log("caT", caTLSCACerts)
     const caClient = new FabricCAServices(`https://ca_${process.env.ORGANIZATION}:${process.env.CAPORT}`, { trustedRoots: caTLSCACerts, verify: false }, caInfo.caName);
 
     console.log(`Built a CA Client named ${caInfo.caName}`);
@@ -32,7 +32,7 @@ const buildCAClient = (FabricCAServices, ccp, caHostName) => {
 const buildCCP = () => {
     // load the common connection configuration file
     const ccpPath = path.resolve(__dirname, '..', '..', 'hosp-network', 'organizations', 'peerOrganizations', `${process.env.ORGANIZATION}.example.com`, `connection-${process.env.ORGANIZATION}.json`);
-    console.log("ccppath",ccpPath)
+    console.log("ccppath", ccpPath)
     const fileExists = fs.existsSync(ccpPath);
     if (!fileExists) {
         throw new Error(`no such file or directory: ${ccpPath}`);
@@ -41,7 +41,7 @@ const buildCCP = () => {
 
     // build a JSON object from the file contents
     const ccp = JSON.parse(contents);
-    console.log("cpp",ccp)
+    console.log("cpp", ccp)
 
     console.log(`Loaded the network configuration located at ${ccpPath}`);
     return ccp;
@@ -76,8 +76,8 @@ const enrollAdmin = async () => {
             console.log('An identity for the admin user already exists in the wallet');
             throw new Error('An identity for the admin user already exists in the wallet');
         }
-        console.log("process.env.ADMIN_USERID1",process.env.ADMIN_USERID)
-        console.log("process.env.ADMIN_USERPW",process.env.ADMIN_USERPW)
+        console.log("process.env.ADMIN_USERID1", process.env.ADMIN_USERID)
+        console.log("process.env.ADMIN_USERPW", process.env.ADMIN_USERPW)
         const enrollment = await caClient.enroll({ enrollmentID: process.env.ADMIN_USERID, enrollmentSecret: process.env.ADMIN_USERPW });
         const x509Identity = {
             credentials: {
@@ -87,10 +87,10 @@ const enrollAdmin = async () => {
             mspId: process.env.MSPID,
             type: 'X.509',
         };
-        console.log("process.env.ADMIN_USERID",process.env.ADMIN_USERID)
+        console.log("process.env.ADMIN_USERID", process.env.ADMIN_USERID)
         await wallet.put(process.env.ADMIN_USERID, x509Identity);
-        console.log("process.env.ADMIN_USERID1",process.env.ADMIN_USERID)
-      } catch (error) {
+        console.log("process.env.ADMIN_USERID1", process.env.ADMIN_USERID)
+    } catch (error) {
         console.error(`Failed to enroll admin user : ${error}`);
         throw new Error(`Failed to enroll admin user : ${error}`);
     }
@@ -98,7 +98,7 @@ const enrollAdmin = async () => {
 
 const registerAndEnrollUser = async (req, _res, next) => {
     try {
-        console.log("body",JSON.stringify(req.body))
+        console.log("body", JSON.stringify(req.body))
 
         const { email } = req.body;
 
@@ -119,7 +119,7 @@ const registerAndEnrollUser = async (req, _res, next) => {
         }
         const provider = wallet.getProviderRegistry().getProvider(adminIdentity.type);
         const adminUser = await provider.getUserContext(adminIdentity, process.env.ADMIN_USERID);
-  
+
         const secret = await caClient.register({
             affiliation: process.env.AFFILIATION,
             enrollmentID: email,
@@ -137,7 +137,7 @@ const registerAndEnrollUser = async (req, _res, next) => {
             mspId: process.env.MSPID,
             type: 'X.509',
         };
-        
+
         await wallet.put(email, x509Identity);
         req.ca = x509Identity;
         const user = new User({
@@ -145,32 +145,32 @@ const registerAndEnrollUser = async (req, _res, next) => {
             email: req.body.email,
             role: req.body.role,
             password: bcrypt.hashSync(req.body.password, 8)
-            
-          });
-          user
-          .save()
-          .then(result => {
-            console.log(result);
-            res.status(201).json({
-              message:'User created'
+
+        });
+        user
+            .save()
+            .then(result => {
+                console.log(result);
+                res.status(201).json({
+                    message: 'User created'
+                })
             })
-          })
-          .catch(err =>{
-            console.log(err);
-          })
+            .catch(err => {
+                console.log(err);
+            })
         return next();
-        
+
 
     } catch (error) {
         console.error(`Failed to register user : ${error}`);
         next(error);
     }
-  
+
 };
 
 const invokeChaincode = async (req, _res, next) => {
     try {
-        
+
         const funcName = req.blockchainFunc;
         const ccp = buildCCP();
         const wallet = await buildWallet(Wallets, walletPath);
@@ -182,29 +182,29 @@ const invokeChaincode = async (req, _res, next) => {
                 identity: 'admin',
                 discovery: { enabled: true, asLocalhost: false }
             });
-           
-            
+
+
             const network = await gateway.getNetwork(process.env.CHANNEL_NAME);
             const contract = network.getContract(process.env.CHAINCODE_NAME);
             req.body._id = uuidv4();
 
             await contract.submitTransaction('CreateReport',
-            req.body._id,
-            req.body.doctorName,
-            req.body.patientName,
-            process.env.MSPID,
-            req.body.description,
-            //req.body.issueDate,
-            Date.now(),
-            req.body.height,
-            req.body.weight);
+                req.body._id,
+                req.body.doctorName,
+                req.body.patientName,
+                process.env.MSPID,
+                req.body.description,
+                //req.body.issueDate,
+                Date.now(),
+                req.body.height,
+                req.body.weight);
             // const result = await contract.evaluateTransaction(funcName, req.login._id);
             // req.blockchain = prettyJSONString(result.toString());
 
             return next();
         } finally {
             gateway.disconnect();
-            
+
         }
     } catch (error) {
         next(error);
@@ -233,14 +233,9 @@ const queryChaincode = async (req, _res, next) => {
 
             console.log(`*** Result: ${prettyJSONString(result.toString())}`);
 
-<<<<<<< HEAD
             result = prettyJSONString(result.toString());
             console.log(result)
-            _res.render('report',{result})
-=======
-            req.blockchain = prettyJSONString(result.toString());
-            res.render('report',{blockchain})
->>>>>>> c9a4b67436fdc3c5f51277298983f7e2a4e6a197
+            _res.render('report', { result })
         } finally {
             // Disconnect from the gateway when the application is closing
             // This will close all connections to the network

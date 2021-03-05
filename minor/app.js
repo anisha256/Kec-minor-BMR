@@ -108,6 +108,26 @@ app.get('/doctor_entry', (req, res) => {
     data: {}
   })
 })
+
+app.post('/doctor_entry', function (req, res) {
+  res.render('form', {
+    data: req.body
+  })
+  console.log(req.body.doctorName)
+  var user = new Doctor({
+    doctorName: req.body.doctorName,
+    NMCNumber: req.body.NMCNumber,
+    //hospitalName: res.body.hospitalName,
+    qualification: req.body.qualification,
+    speciality: req.body.speciality,
+
+  })
+  var promise = doctor.save()
+  promise.then((doctor) => {
+    console.log("user saved", doctor)
+  })
+
+})
 app.post('/quote',
 
   blockchainController.invokeChaincode,
