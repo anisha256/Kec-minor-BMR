@@ -22,7 +22,7 @@ type Report struct {
 	Timestamp         string `json:"timestamp"`
 	Description       string `json:"description"`
 	Height            string `json:"height"`
-	Weight            string `json:"weight"`
+	PatCitizenshipNo  string `json:"patCitizenshipNo"`
 	
 }
 
@@ -33,7 +33,7 @@ func (s *SmartContract) InitLedger(ctx contractapi.TransactionContextInterface) 
 }
 
 // CreateReport issues a new report to the world state with given details.
-func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface, id string, doctorName string, patientName string, hospitalName string, description string, at string, height string, weight string) error {
+func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface, id string, doctorName string, patientName string, hospitalName string, description string, at string, height string, patCitizenshipNo string) error {
 	exists, err := s.ReportExists(ctx, id)
 	if err != nil {
 		return err
@@ -51,7 +51,7 @@ func (s *SmartContract) CreateReport(ctx contractapi.TransactionContextInterface
 		Timestamp:    at,
 		Description:  description,
 		Height:       height,
-		Weight:       weight,
+		PatCitizenshipNo:  patCitizenshipNo,
 		
 	}
 
@@ -112,7 +112,7 @@ func (s *SmartContract) ReadReportFromUser(ctx contractapi.TransactionContextInt
 }
 
 // UpdateReport updates an existing report in the world state with provided parameters.
-func (s *SmartContract) UpdateReport(ctx contractapi.TransactionContextInterface, id string, doctorName string, patientName string, hospitalName string, description string, at string, height string, weight string) error {
+func (s *SmartContract) UpdateReport(ctx contractapi.TransactionContextInterface, id string, doctorName string, patientName string, hospitalName string, description string, at string, height string, patCitizenshipNo string) error {
 	exists, err := s.ReportExists(ctx, id)
 	if err != nil {
 		return err
@@ -131,7 +131,7 @@ func (s *SmartContract) UpdateReport(ctx contractapi.TransactionContextInterface
 		Timestamp:    at,
 		Description:  description,
 		Height:       height,
-		Weight:       weight,
+		PatCitizenshipNo: patCitizenshipNo,
 	
 	}
 	reportJSON, err := json.Marshal(report)

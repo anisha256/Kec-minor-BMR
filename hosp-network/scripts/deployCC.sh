@@ -37,39 +37,23 @@ FABRIC_CFG_PATH=$PWD/../config/
 # be the short name of a known chaincode sample
 if [ "$CC_SRC_PATH" = "NA" ]; then
   infoln "Determining the path to the chaincode"
-  # first see which chaincode we have. This will be based on the
-  # short name of the known chaincode sample
+  
   if [ "$CC_NAME" = "basic" ]; then
     println $'\e[0;32m'asset-transfer-basic$'\e[0m' chaincode
     CC_SRC_PATH="../asset-transfer-basic"
   elif [ "$CC_NAME" = "reporting" ]; then
     println $'\e[0;32m'asset-transfer-reporting$'\e[0m' chaincode
     CC_SRC_PATH="../asset-transfer-reporting"
-  elif [ "$CC_NAME" = "secured" ]; then
-    println $'\e[0;32m'asset-transfer-secured-agreeement$'\e[0m' chaincode
-    CC_SRC_PATH="../asset-transfer-secured-agreement"
-  elif [ "$CC_NAME" = "ledger" ]; then
-    println $'\e[0;32m'asset-transfer-ledger-agreeement$'\e[0m' chaincode
-    CC_SRC_PATH="../asset-transfer-ledger-queries"
-  elif [ "$CC_NAME" = "private" ]; then
-    println $'\e[0;32m'asset-transfer-private-data$'\e[0m' chaincode
-    CC_SRC_PATH="../asset-transfer-private-data"
-  elif [ "$CC_NAME" = "sbe" ]; then
-    println $'\e[0;32m'asset-transfer-sbe$'\e[0m' chaincode
-    CC_SRC_PATH="../asset-transfer-sbe"
   else
-    fatalln "The chaincode name ${CC_NAME} is not supported by this script. Supported chaincode names are: basic, ledger, private, sbe, secured"
+    fatalln "The chaincode name ${CC_NAME} is not supported by this script."
   fi
 
   # now see what language it is written in
   if [ "$CC_SRC_LANGUAGE" = "go" ]; then
     CC_SRC_PATH="$CC_SRC_PATH/chaincode-go/"
-  elif [ "$CC_SRC_LANGUAGE" = "java" ]; then
-    CC_SRC_PATH="$CC_SRC_PATH/chaincode-java/"
-  elif [ "$CC_SRC_LANGUAGE" = "javascript" ]; then
-    CC_SRC_PATH="$CC_SRC_PATH/chaincode-javascript/"
-  elif [ "$CC_SRC_LANGUAGE" = "typescript" ]; then
-    CC_SRC_PATH="$CC_SRC_PATH/chaincode-typescript/"
+  
+  else
+    fatalln "Error"
   fi
 
   # check that the language is available for the sample chaincode
@@ -81,7 +65,7 @@ elif [ ! -d "$CC_SRC_PATH" ]; then
   fatalln "Path to chaincode does not exist. Please provide different path"
 fi
 
-# do some language specific preparation to the chaincode before packaging
+
 if [ "$CC_SRC_LANGUAGE" = "go" ]; then
   CC_RUNTIME_LANGUAGE=golang
 
@@ -91,30 +75,6 @@ if [ "$CC_SRC_LANGUAGE" = "go" ]; then
   go mod vendor
   popd
   successln "Finished vendoring Go dependencies"
-
-elif [ "$CC_SRC_LANGUAGE" = "java" ]; then
-  CC_RUNTIME_LANGUAGE=java
-
-  infoln "Compiling Java code..."
-  pushd $CC_SRC_PATH
-  ./gradlew installDist
-  popd
-  successln "Finished compiling Java code"
-  CC_SRC_PATH=$CC_SRC_PATH/build/install/$CC_NAME
-
-elif [ "$CC_SRC_LANGUAGE" = "javascript" ]; then
-  CC_RUNTIME_LANGUAGE=node
-
-elif [ "$CC_SRC_LANGUAGE" = "typescript" ]; then
-  CC_RUNTIME_LANGUAGE=node
-
-  infoln "Compiling TypeScript code into JavaScript..."
-  pushd $CC_SRC_PATH
-  npm install
-  npm run build
-  popd
-  successln "Finished compiling TypeScript code into JavaScript"
-
 else
   fatalln "The chaincode language ${CC_SRC_LANGUAGE} is not supported by this script. Supported chaincode languages are: go, java, javascript, and typescript"
   exit 1
